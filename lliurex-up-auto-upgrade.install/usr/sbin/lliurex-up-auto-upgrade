@@ -1,0 +1,146 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+import os
+import subprocess
+import sys
+import xmlrpc.client as n4dclient
+import ssl
+import time
+import random
+import datetime
+import json
+
+
+class LlxUpAutoUpgrade():
+
+	def __init__(self):
+
+		self.interval=1800
+		self.tokenPath="/var/run/lliurex-up-auto-upgrade.token"
+		self.lockPath="/var/run/lliurex-up-auto-upgrade.lock"
+		self.lliurexUpAutoControlFile="/etc/lliurex-up-auto-upgrade/lliurex-up-auto-upgrade.json"
+		self.context=ssl._create_unverified_context()
+		self.launchUpgrade()
+
+	#def __init__ 	
+
+
+	def launchUpgrade(self):
+
+		self._cleanEnvironment()
+		
+		if self._canLaunchUpgrade():
+			if not self._getLockFlavour():
+				currentTime=datetime.datetime.now()
+				waitTime1=random.randint(600,self.interval)
+				waitTime2=random.randint(0,self.interval)
+				sleepTime=waitTime1+waitTime2
+				updateTime=currentTime+datetime.timedelta(seconds=sleepTime)
+				formatTime=updateTime.strftime("%H:%M:%S")
+				with open(self.tokenPath,'w') as fd:
+					fd.write(str(formatTime))
+			
+				time.sleep(sleepTime)
+
+				with open(self.lockPath,'w') as fd:
+					fd.close()
+
+				cmd="lliurex-upgrade -u -n"
+				p=subprocess.run(cmd,shell=True,check=True)
+			
+				self._cleanEnvironment()
+				self._initializeControlFile()
+
+	#def launchUpgrade
+
+	def _getLockFlavour(self):
+
+		cmd='lliurex-version -v'
+		p=subprocess.Popen(cmd,shell=True,stdout=subprocess.PIPE)
+		result=p.communicate()[0]
+		lockFlavour=False
+		client=False
+		desktop=False
+
+		if type(result) is bytes:
+			result=result.decode()
+		flavours = [ x.strip() for x in result.split(',') ]	
+		
+		for item in flavours:
+			if 'server' in item:
+				lockFlavour=True
+				break
+			elif 'client' in item:
+				client=True
+			elif 'desktop' in item:
+				desktop=True
+				
+		if client:
+			if desktop:
+				if self._checkIsConnectionWithServer():
+					lockFlavour=True
+			else:
+				lockFlavour=True
+							
+		return lockFlavour
+
+	#def _getLockFlavour
+
+	def _checkIsConnectionWithServer(self):
+
+		try:
+			self.context=ssl._create_unverified_context()
+			client=n4dclient.ServerProxy('https://server:9779',context=self.context,allow_none=True)
+			test=client.is_alive('','MirrorManager')
+			return True
+		except Exception as e:
+			return False
+
+	#def _checkIsConnectionWithServer
+
+	def _cleanEnvironment(self):
+
+		if os.path.exists(self.lockPath):
+			os.remove(self.lockPath)
+
+		if os.path.exists(self.tokenPath):
+			os.remove(self.tokenPath)
+
+	#def _cleanEnvironment
+
+	def _canLaunchUpgrade(self):
+
+		if os.path.exists(self.lliurexUpAutoControlFile):
+			try:
+				with open(self.lliurexUpAutoControlFile,'r') as fd:
+					currentContent=json.load(fd)
+				today=datetime.date.today()
+				today=today.isoformat()
+				if today<currentContent["dateToUpdate"]:
+					return False
+			except:
+				pass
+
+		return True
+
+	#def _canLaunchUpgrade
+
+	def _initializeControlFile(self):
+
+		try:
+			with open('/etc/n4d/key','r') as fd:
+				n4dKey=fd.readlines()[0].strip()
+
+			client=n4dclient.ServerProxy('https://localhost:9779',context=self.context,allow_none=True)
+			result=client.initialize_control_file(n4dKey,"LliurexUpManager")
+
+		except:
+			pass
+
+	#def _initializeControlFile	
+		
+#def LlxUpAutoUpgrade
+
+llxupAutoUpgrade=LlxUpAutoUpgrade()		
+

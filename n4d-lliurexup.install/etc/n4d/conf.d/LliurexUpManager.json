@@ -1,0 +1,56 @@
+{
+    "SETUP": {
+        "type": "python",
+        "path": "LliurexUpManager.py",
+        "class": "LliurexUpManager"
+    },
+    "METHODS": {
+        
+        "stop_auto_update_service": {
+            "allowed_groups": [
+                "anonymous"
+            ]
+        },
+
+        "is_auto_update_active":{
+            "allowed_groups":[
+                "anonymous"
+            ]
+        },
+
+        "is_auto_update_enabled":{
+            "allowed_groups":[
+                "anonymous"
+            ]
+        },
+
+        "is_auto_update_running":{
+            "allowed_groups":[
+                "anonymous"
+            ]
+        },
+
+        "manage_auto_update_service":{
+            "allowed_groups": [
+                "sudo",
+                "admins",
+                "teachers"
+            ]
+        },
+
+        "can_cancel_auto_upgrade":{
+            "allowed_groups":[
+                "anonymous"
+            ]
+        },
+
+        "initialize_control_file":{
+            "allowed_groups":[
+                "sudo",
+                "admins",
+                "teachers"             
+            ]
+        }
+         
+    }
+}
