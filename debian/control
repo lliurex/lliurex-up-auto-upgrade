@@ -4,7 +4,6 @@ Priority: optional
 Maintainer: LliureX Team <lliurex@gva.es>
 Build-Depends: debhelper (>=10),
                systemd
-
 Standards-Version: 4.1.2
 Homepage: http://lliurex.net
 Vcs-Browser: https://github.com/lliurex/lliurex-up-auto-upgrade
