@@ -1,21 +1,16 @@
 #!/bin/bash
 set -e
 
-AUTO_UPDGRADE_TOKEN="/var/run/lliurex-up-auto-upgrade.token"
-AUTO_UPDGRADE_CONTROL_DIR="/etc/lliurex-up-auto-upgrade"
+AUTO_UPGRADE_TOKEN="/var/run/lliurex-up-auto-upgrade.token"
 
 case $1 in 
      
      remove|purge|abort-install|disappear) 
      
-		if  [ -e "${AUTO_UPDGRADE_TOKEN}" ]; then
-			rm -f "${AUTO_UPDGRADE_TOKEN}" || true
+		if  [ -e "${AUTO_UPGRADE_TOKEN}" ]; then
+			rm -f "${AUTO_UPGRADE_TOKEN}" || true
 		fi	
-
-        if [ -d "${AUTO_UPDGRADE_CONTROL_DIR}" ];then
-            rm -rf "${AUTO_UPDGRADE_CONTROL_DIR}" || true
-        fi
-		
+	
      ;;
 esac
 
