@@ -1,0 +1,20 @@
+#!/bin/bash
+set -e
+
+AUTO_UPDGRADE_CONTROL_DIR="/etc/lliurex-up-auto-upgrade"
+
+case $1 in 
+     
+     remove|purge|abort-install|disappear) 
+     
+	    if [ -d "${AUTO_UPDGRADE_CONTROL_DIR}" ];then
+            rm -rf "${AUTO_UPDGRADE_CONTROL_DIR}" || true
+        fi
+		
+     ;;
+esac
+
+#DEBHELPER#
+
+exit 0
+
