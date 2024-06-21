@@ -1,0 +1,13 @@
+[Unit]
+Description=Lliurex Up Auto Upgrade DAEMON
+Wants=network-online.target n4d.target
+After=network-online.target lliurex-auto-upgrade.target
+
+
+[Service]
+User=root
+ExecStart=/usr/sbin/lliurex-up-auto-upgrade
+StandardOutput=journal
+
+[Install]
+WantedBy=multi-user.target
