@@ -47,7 +47,10 @@ class LlxUpAutoUpgrade():
 					fd.close()
 
 				cmd="lliurex-upgrade -u -n"
-				p=subprocess.run(cmd,shell=True,check=True)
+				try:
+					p=subprocess.run(cmd,shell=True,check=True)
+				except subprocess.CalledProcessError as e:
+					pass
 			
 				self._cleanEnvironment()
 				self._initializeControlFile()
