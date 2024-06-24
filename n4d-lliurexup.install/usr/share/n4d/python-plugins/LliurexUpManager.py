@@ -84,16 +84,13 @@ class LliurexUpManager:
 		result=True
 		if enable:
 			if not self.is_auto_update_enabled()["return"]:
-				cmd="systemctl enable lliurex-up-auto-upgrade.service"
-				p=subprocess.run(cmd,shell=True,check=True)
-				returnCode=p.returncode
-				if returnCode!=0:
-					if self.is_auto_update_enabled()["return"]:
-						result=True
-					else:
-						result=False
-				else:
+				try:
+					cmd="systemctl enable lliurex-up-auto-upgrade.service"
+					p=subprocess.run(cmd,shell=True,check=True)
 					result=True
+				except subprocess.CalledProcessError as e:
+					result=False
+					pass
 			else:
 				result=True
 
@@ -101,16 +98,12 @@ class LliurexUpManager:
 				self._create_control_file(3)
 		else:
 			if self.is_auto_update_enabled()["return"]:
-				cmd="systemctl disable lliurex-up-auto-upgrade.service"
-				p=subprocess.run(cmd,shell=True,check=True)
-				returnCode=p.returncode
-				if returnCode!=0:
-					if not self.is_auto_update_enabled()["return"]:
-						result=True
-					else:
-						result=False
-				else:
+				try:
+					cmd="systemctl disable lliurex-up-auto-upgrade.service"
+					p=subprocess.run(cmd,shell=True,check=True)
 					result=True
+				except subprocess.CalledProcessError as e:
+					result=False
 			else:
 				result=True
 
@@ -125,14 +118,13 @@ class LliurexUpManager:
 
 		if ret:
 			if not self.is_auto_update_running()["return"]:
-				cmd="systemctl stop lliurex-up-auto-upgrade.service"
-				p=subprocess.run(cmd,shell=True,check=True)
-				returnCode=p.returncode
-
-				if returnCode==0:
+				try:
+					cmd="systemctl stop lliurex-up-auto-upgrade.service"
+					p=subprocess.run(cmd,shell=True,check=True)
+					resul=True
 					if os.path.exists(self.lliurexUpAutoToken):
 						os.remove(self.lliurexUpAutoToken)
-				else:
+				except subprocess.CalledProcessError as e:
 					result=False
 
 				if isSystemUpdate:
