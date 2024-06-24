@@ -87,12 +87,9 @@ class LliurexUpManager:
 				try:
 					cmd="systemctl enable lliurex-up-auto-upgrade.service"
 					p=subprocess.run(cmd,shell=True,check=True)
-					result=True
 				except subprocess.CalledProcessError as e:
 					result=False
 					pass
-			else:
-				result=True
 
 			if result:
 				self._create_control_file(3)
@@ -101,11 +98,8 @@ class LliurexUpManager:
 				try:
 					cmd="systemctl disable lliurex-up-auto-upgrade.service"
 					p=subprocess.run(cmd,shell=True,check=True)
-					result=True
 				except subprocess.CalledProcessError as e:
 					result=False
-			else:
-				result=True
 
 		return n4d.responses.build_successful_call_response(result)	
 
@@ -121,7 +115,6 @@ class LliurexUpManager:
 				try:
 					cmd="systemctl stop lliurex-up-auto-upgrade.service"
 					p=subprocess.run(cmd,shell=True,check=True)
-					resul=True
 					if os.path.exists(self.lliurexUpAutoToken):
 						os.remove(self.lliurexUpAutoToken)
 				except subprocess.CalledProcessError as e:
