@@ -1,0 +1,20 @@
+#!/bin/bash
+set -e
+
+AUTO_UPGRADE_TOKEN="/var/run/lliurex-up-auto-upgrade.token"
+
+case $1 in 
+     
+     remove|purge|abort-install|disappear) 
+     
+		if  [ -e "${AUTO_UPGRADE_TOKEN}" ]; then
+			rm -f "${AUTO_UPGRADE_TOKEN}" || true
+		fi	
+	
+     ;;
+esac
+
+#DEBHELPER#
+
+exit 0
+

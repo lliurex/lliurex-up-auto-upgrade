@@ -1,0 +1,22 @@
+Source: lliurex-up-auto-upgrade
+Section: admin
+Priority: optional
+Maintainer: LliureX Team <lliurex@gva.es>
+Build-Depends: debhelper (>=10),
+               systemd
+Standards-Version: 4.1.2
+Homepage: http://lliurex.net
+Vcs-Browser: https://github.com/lliurex/lliurex-up-auto-upgrade
+
+Package: lliurex-up-auto-upgrade
+Architecture: all
+Depends: ${shlibs:Depends}, ${misc:Depends},n4d-lliurexup,lliurex-up (> 21.04.58),lliurex-up-indicator (> 21.04.58)
+Description: Service for auto upgrades
+ This package provides a service to enable auto-upgrades.
+
+Package:n4d-lliurexup
+Architecture: all
+Depends: ${misc:Depends}, ${python3:Depends},n4d
+Description: Lliurex-Up plugin
+  Plugins supporting some LliureX-Up funcionality
+
