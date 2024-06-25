@@ -120,10 +120,10 @@ class LliurexUpManager:
 				except subprocess.CalledProcessError as e:
 					result=False
 
-				if isSystemUpdate:
-					self._create_control_file(3)
-				else:
-					self._update_control_file()
+		if isSystemUpdate:
+			self._create_control_file(3)
+		else:
+			self._update_control_file()
 
 		return n4d.responses.build_successful_call_response(result)	
 	

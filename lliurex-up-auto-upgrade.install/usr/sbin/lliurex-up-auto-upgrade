@@ -53,7 +53,6 @@ class LlxUpAutoUpgrade():
 					pass
 			
 				self._cleanEnvironment()
-				self._initializeControlFile()
 
 	#def launchUpgrade
 
@@ -129,20 +128,6 @@ class LlxUpAutoUpgrade():
 
 	#def _canLaunchUpgrade
 
-	def _initializeControlFile(self):
-
-		try:
-			with open('/etc/n4d/key','r') as fd:
-				n4dKey=fd.readlines()[0].strip()
-
-			client=n4dclient.ServerProxy('https://localhost:9779',context=self.context,allow_none=True)
-			result=client.initialize_control_file(n4dKey,"LliurexUpManager")
-
-		except:
-			pass
-
-	#def _initializeControlFile	
-		
 #def LlxUpAutoUpgrade
 
 llxupAutoUpgrade=LlxUpAutoUpgrade()		
