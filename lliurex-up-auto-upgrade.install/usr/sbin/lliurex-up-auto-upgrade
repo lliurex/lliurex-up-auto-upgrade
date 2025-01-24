@@ -4,7 +4,7 @@
 import os
 import subprocess
 import sys
-import xmlrpc.client as n4dclient
+import n4d.client as n4dclient
 import ssl
 import time
 import random
@@ -16,11 +16,14 @@ class LlxUpAutoUpgrade():
 
 	def __init__(self):
 
-		self.interval=1800
+		self.adiInterval=900
+		self.adiDelay=600
+		self.desktopADIDelay=2700
+		self.desktopInterval=3600
+		self.desktopDelay=600
 		self.tokenPath="/var/run/lliurex-up-auto-upgrade.token"
 		self.lockPath="/var/run/lliurex-up-auto-upgrade.lock"
 		self.lliurexUpAutoControlFile="/etc/lliurex-up-auto-upgrade/lliurex-up-auto-upgrade.json"
-		self.context=ssl._create_unverified_context()
 		self.launchUpgrade()
 
 	#def __init__ 	
@@ -31,75 +34,82 @@ class LlxUpAutoUpgrade():
 		self._cleanEnvironment()
 		
 		if self._canLaunchUpgrade():
-			if not self._getLockFlavour():
-				currentTime=datetime.datetime.now()
-				waitTime1=random.randint(600,self.interval)
-				waitTime2=random.randint(0,self.interval)
-				sleepTime=waitTime1+waitTime2
-				updateTime=currentTime+datetime.timedelta(seconds=sleepTime)
-				formatTime=updateTime.strftime("%H:%M:%S")
-				with open(self.tokenPath,'w') as fd:
-					fd.write(str(formatTime))
+			self._getDelayTime()
+			currentTime=datetime.datetime.now()
+			waitTime1=random.randint(self.delay,self.startInterval)
+			#waitTime2=random.randint(0,self.endInterval)
+			#sleepTime=waitTime1+waitTime2
+			sleepTime=waitTime1
+			updateTime=currentTime+datetime.timedelta(seconds=sleepTime)
+			formatTime=updateTime.strftime("%H:%M:%S")
+			with open(self.tokenPath,'w') as fd:
+				fd.write(str(formatTime))
 			
-				time.sleep(sleepTime)
+			time.sleep(sleepTime)
 
-				with open(self.lockPath,'w') as fd:
-					fd.close()
+			with open(self.lockPath,'w') as fd:
+				fd.close()
 
-				cmd="lliurex-upgrade -u -n"
-				try:
-					p=subprocess.run(cmd,shell=True,check=True)
-				except subprocess.CalledProcessError as e:
-					pass
+			cmd="lliurex-upgrade -u"
+			try:
+				p=subprocess.run(cmd,shell=True,check=True)
+			except subprocess.CalledProcessError as e:
+				pass
 			
-				self._cleanEnvironment()
+			self._cleanEnvironment()
 
 	#def launchUpgrade
 
-	def _getLockFlavour(self):
+	def _getDelayTime(self):
+
+		adi=False
+		desktop=False
 
 		cmd='lliurex-version -v'
 		p=subprocess.Popen(cmd,shell=True,stdout=subprocess.PIPE)
 		result=p.communicate()[0]
-		lockFlavour=False
-		client=False
-		desktop=False
-
+		
 		if type(result) is bytes:
 			result=result.decode()
 		flavours = [ x.strip() for x in result.split(',') ]	
 		
 		for item in flavours:
-			if 'server' in item:
-				lockFlavour=True
+			if 'adi' in item:
+				adi=True
+				desktop=False
 				break
-			elif 'client' in item:
-				client=True
 			elif 'desktop' in item:
 				desktop=True
-				
-		if client:
+
+
+		if adi:
+			self.startInterval=self.adiInterval
+			self.endInterval=self.adiDelay
+			self.delay=self.adiDelay
+		else:
 			if desktop:
-				if self._checkIsConnectionWithServer():
-					lockFlavour=True
+				if self._checkIsConnectionWithADI():
+					self.startInterval=self.desktopInterval
+					self.delay=self.desktopADIDelay
+				else:
+					self.startInterval=self.desktopInterval
+					self.delay=self.desktopDelay
 			else:
-				lockFlavour=True
-							
-		return lockFlavour
+				self.startInterval=self.desktopInterval
+				self.delay=self.desktopDelay
 
 	#def _getLockFlavour
 
-	def _checkIsConnectionWithServer(self):
+	def _checkIsConnectionWithADI(self):
 
 		try:
-			self.context=ssl._create_unverified_context()
-			client=n4dclient.ServerProxy('https://server:9779',context=self.context,allow_none=True)
-			test=client.is_alive('','MirrorManager')
+			client=n4dclient.Client('https://localhost:9779')
+			test=client.get_variable('EPOPTES_SERVER')
 			return True
 		except Exception as e:
 			return False
 
-	#def _checkIsConnectionWithServer
+	#def _checkIsConnectionWithADI
 
 	def _cleanEnvironment(self):
 

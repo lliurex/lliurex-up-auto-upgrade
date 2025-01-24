@@ -23,6 +23,9 @@ class LliurexUpManager:
 	def _createEnvironment(self):
 
 		createFile=False
+		attemps=3
+		weeksOfPause=0
+
 		if not os.path.exists(self.lliurexUpAutoControlPath):
 			os.mkdir(self.lliurexUpAutoControlPath)
 			createFile=True
@@ -31,18 +34,23 @@ class LliurexUpManager:
 			createFile=True
 
 		if createFile:
-			self._create_control_file(3)
+			self._create_control_file(attemps,weeksOfPause)
 
 	#def _createEnvironment
 
-	def _create_control_file(self,attemps):
+	def _create_control_file(self,attemps,weeksOfPause):
 
 		tmp={}
 		tmp["atttempsAvailables"]=attemps
 		today=datetime.date.today()
-		nextDay=today+datetime.timedelta(days=1)
+		if weeksOfPause==0:
+			nextDay=today+datetime.timedelta(days=1)
+		else:
+			nextDay=today+datetime.timedelta(days=7*weeksOfPause)
+		
 		nextDay=nextDay.isoformat()
 		tmp["dateToUpdate"]=nextDay
+		tmp["weeksOfPause"]=weeksOfPause
 
 		try:
 			with open(self.lliurexUpAutoControlFile,'w') as fd:
@@ -66,22 +74,29 @@ class LliurexUpManager:
 
 	#def _read_control_file
 
-	def _update_control_file(self):
+	def _update_control_file(self,weeksOfPause):
 
 		currentContent=self._read_control_file()
 
 		if len(currentContent)==0:
 			attemps=3
+			weeksOfPause=0
 		else:
-			attemps=currentContent["atttempsAvailables"]-1
+			if weeksOfPause==0:
+				attemps=currentContent["atttempsAvailables"]-1
+			else:
+				attemps=0
 		
-		self._create_control_file(attemps)
+		self._create_control_file(attemps,weeksOfPause)
 
 	#def update_control_file
 
 	def manage_auto_update_service(self,enable):
 		
 		result=True
+		attemps=3
+		weeksOfPause=0
+
 		if enable:
 			if not self.is_auto_update_enabled()["return"]:
 				try:
@@ -92,7 +107,7 @@ class LliurexUpManager:
 					pass
 
 			if result:
-				self._create_control_file(3)
+				self._create_control_file(attemps,weeksOfPause)
 		else:
 			if self.is_auto_update_enabled()["return"]:
 				try:
@@ -105,9 +120,11 @@ class LliurexUpManager:
 
 	#def manage_auto_update_service 
 			
-	def stop_auto_update_service(self,isSystemUpdate=False):
+	def stop_auto_update_service(self,weeksOfPause=0,isSystemUpdate=False):
 
 		result=True
+		attemps=3
+
 		ret=self.is_auto_update_active()["return"]
 
 		if ret:
@@ -121,9 +138,9 @@ class LliurexUpManager:
 					result=False
 
 		if isSystemUpdate:
-			self._create_control_file(3)
+			self._create_control_file(attemps,weeksOfPause)
 		else:
-			self._update_control_file()
+			self._update_control_file(weeksOfPause)
 
 		return n4d.responses.build_successful_call_response(result)	
 	
@@ -182,7 +199,10 @@ class LliurexUpManager:
 
 	def initialize_control_file(self):
 
-		self._create_control_file(3)
+		attemps=3
+		weeksOfPause=0
+
+		self._create_control_file(attemps,weeksOfPause)
 		
 		return n4d.responses.build_successful_call_response(True)			
 

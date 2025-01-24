@@ -33,8 +33,7 @@
         "manage_auto_update_service":{
             "allowed_groups": [
                 "sudo",
-                "admins",
-                "teachers"
+                "admins"
             ]
         },
 
