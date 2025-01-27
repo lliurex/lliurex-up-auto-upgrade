@@ -21,6 +21,15 @@ class LlxUpAutoUpgrade():
 		self.lockPath="/var/run/lliurex-up-auto-upgrade.lock"
 		self.lliurexUpAutoControlFile="/etc/lliurex-up-auto-upgrade/lliurex-up-auto-upgrade.json"
 		self.context=ssl._create_unverified_context()
+		self.natFreeServerPath="/usr/bin/natfree-server"
+		self.isADI=False
+		self.canConnectWithADI=False
+		self.adiInterval=900
+		self.adiDelay=300
+		self.desktopADIDelay=1800
+		self.deskopInterval=3600
+		self.desktopDelay=600
+
 		self.launchUpgrade()
 
 	#def __init__ 	
@@ -32,10 +41,9 @@ class LlxUpAutoUpgrade():
 		
 		if self._canLaunchUpgrade():
 			if not self._getLockFlavour():
+				self._getDelayTime()
 				currentTime=datetime.datetime.now()
-				waitTime1=random.randint(600,self.interval)
-				waitTime2=random.randint(0,self.interval)
-				sleepTime=waitTime1+waitTime2
+				sleepTime=random.randint(self.delay,self.interval)
 				updateTime=currentTime+datetime.timedelta(seconds=sleepTime)
 				formatTime=updateTime.strftime("%H:%M:%S")
 				with open(self.tokenPath,'w') as fd:
@@ -46,7 +54,7 @@ class LlxUpAutoUpgrade():
 				with open(self.lockPath,'w') as fd:
 					fd.close()
 
-				cmd="lliurex-upgrade -u -n"
+				cmd="lliurex-upgrade -u"
 				try:
 					p=subprocess.run(cmd,shell=True,check=True)
 				except subprocess.CalledProcessError as e:
@@ -84,7 +92,13 @@ class LlxUpAutoUpgrade():
 					lockFlavour=True
 			else:
 				lockFlavour=True
-							
+		else:
+			if desktop:
+				if os.path.exists(self.natFreeServerPath):
+					self.isADI=True
+				else:
+					self._checkIsConnectionWithADI()
+
 		return lockFlavour
 
 	#def _getLockFlavour
@@ -92,14 +106,36 @@ class LlxUpAutoUpgrade():
 	def _checkIsConnectionWithServer(self):
 
 		try:
-			self.context=ssl._create_unverified_context()
-			client=n4dclient.ServerProxy('https://server:9779',context=self.context,allow_none=True)
+			client=n4d.client.Client("https://server:9779",context=self.context,allow_none=True)
 			test=client.is_alive('','MirrorManager')
 			return True
 		except Exception as e:
 			return False
 
 	#def _checkIsConnectionWithServer
+
+	def _checkIsConnectionWithADI(self):
+
+		self.canConnectWithADI=False
+
+	#def _checkIsConnectionWithADI
+
+	def _getDelayTime(self):
+
+		if self.isADI:
+			self.delay=self.adiDelay
+			self.interval=self.adiInterval
+
+		else:
+			if self.canConnectWithADI:
+				self.delay=self.desktopADIDelay
+				self.interval=self.deskopInterval
+			else:
+				self.delay=self.desktopDelay
+				self.interval=self.deskopInterval
+
+
+	#def _getDelayTime
 
 	def _cleanEnvironment(self):
 

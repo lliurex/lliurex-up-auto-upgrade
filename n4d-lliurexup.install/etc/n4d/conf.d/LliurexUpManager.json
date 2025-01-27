@@ -44,6 +44,14 @@
             ]
         },
 
+        "manage_auto_update_pause":{
+            "allowed_groups":[
+                "sudo",
+                "admins",
+                "teachers"
+            ]
+        },
+
         "initialize_control_file":{
             "allowed_groups":[
                 "sudo",
