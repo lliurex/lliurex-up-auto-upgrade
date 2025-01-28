@@ -6,6 +6,12 @@
     },
     "METHODS": {
         
+        "read_current_config":{
+            "allowed_groups":[
+                "anonymous"
+            ]
+        },
+        
         "stop_auto_update_service": {
             "allowed_groups": [
                 "anonymous"

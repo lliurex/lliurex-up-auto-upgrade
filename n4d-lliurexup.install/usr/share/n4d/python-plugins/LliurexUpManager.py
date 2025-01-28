@@ -68,6 +68,22 @@ class LliurexUpManager:
 
 	#def _create_control_file
 
+	def read_current_config(self):
+
+		currentConfig={}
+		ret=self._read_control_file()
+
+		if ret:
+			currentConfig["cancellationsAvailables"]=self.cancellationsAvailables
+			currentConfig["dateToUpdate"]=self.dateToUpdate
+			currentConfig["weeksOfPause"]=self.weeksOfPause
+			currentConfig["extensionPause"]=self.extensionPause
+
+		result=[ret,currentConfig]
+		return n4d.responses.build_successful_call_response(result)
+
+	#def read_current config
+
 	def _read_control_file(self):
 
 		result=True
@@ -154,6 +170,7 @@ class LliurexUpManager:
 				try:
 					cmd="systemctl disable lliurex-up-auto-upgrade.service"
 					p=subprocess.run(cmd,shell=True,check=True)
+					return self.stop_auto_update_service(True)
 				except subprocess.CalledProcessError as e:
 					result=False
 
