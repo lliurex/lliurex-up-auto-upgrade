@@ -19,6 +19,7 @@ class LliurexUpManager:
 		self.cancellationsAvailables=3
 		self.weeksOfPause=0
 		self.extensionPause=5
+		self.limitWeeksOfPause=5
 		self.dateToUpdate=datetime.date.today()
 
 	#def __init__
@@ -79,7 +80,7 @@ class LliurexUpManager:
 			currentConfig["weeksOfPause"]=self.weeksOfPause
 			currentConfig["extensionPause"]=self.extensionPause
 
-		result=[ret,currentConfig]
+		result={"status":ret,"data":currentConfig}
 		return n4d.responses.build_successful_call_response(result)
 
 	#def read_current config
@@ -130,16 +131,16 @@ class LliurexUpManager:
 
 			else:
 				if weeksOfPause>0:
-					if weeksOfPause<self.extensionPause:
-						self.weeksOfPause=self.weeksOfPause+weeksOfPause
-						self.extensionPause=self.extensionPause-self.weeksOfPause
+					if weeksOfPause<=self.limitWeeksOfPause:
+						self.weeksOfPause=weeksOfPause
+						self.extensionPause=self.limitWeeksOfPause-self.weeksOfPause
 
 						if currentWeeksOfPause==0:
 							nextDay=today
 						else:
 							nextDay=datetime.date.fromisoformat(self.dateToUpdate)
 						
-						nextDay=currentDay+datetime.timedelta(days=7*self.weeksOfPause)
+						nextDay=nextDay+datetime.timedelta(days=7*self.weeksOfPause)
 						self.dateToUpdate=nextDay.isoformat()
 						updateFile=True
 
