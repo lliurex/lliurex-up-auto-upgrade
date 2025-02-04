@@ -131,18 +131,18 @@ class LliurexUpManager:
 
 			else:
 				if weeksOfPause>0:
-					if weeksOfPause<=self.limitWeeksOfPause:
-						self.weeksOfPause=weeksOfPause
-						self.extensionPause=self.limitWeeksOfPause-self.weeksOfPause
-
-						if currentWeeksOfPause==0:
+					if currentWeeksOfPause==0:
+						if weeksOfPause<=self.limitWeeksOfPause:
 							nextDay=today
-						else:
+					else:
+						if weeksOfPause<=self.extensionPause:
 							nextDay=datetime.date.fromisoformat(self.dateToUpdate)
 						
-						nextDay=nextDay+datetime.timedelta(days=7*self.weeksOfPause)
-						self.dateToUpdate=nextDay.isoformat()
-						updateFile=True
+					nextDay=nextDay+datetime.timedelta(days=7*weeksOfPause)
+					self.dateToUpdate=nextDay.isoformat()
+					self.weeksOfPause=self.weeksOfPause+weeksOfPause
+					self.extensionPause=self.limitWeeksOfPause-self.weeksOfPause
+					updateFile=True
 
 		if updateFile:			
 			return self._create_control_file()
