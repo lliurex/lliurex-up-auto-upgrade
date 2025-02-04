@@ -167,6 +167,7 @@ class LliurexUpManager:
 	def manage_auto_update_service(self,enable):
 		
 		result=True
+
 		if enable:
 			logMsg="LliurexUpManager:manage_auto_update_service.Try to enable service"
 			syslog.openlog("N4D-LLIUREXUP-MANAGER")
@@ -194,7 +195,7 @@ class LliurexUpManager:
 				try:
 					cmd="systemctl disable lliurex-up-auto-upgrade.service"
 					p=subprocess.run(cmd,shell=True,check=True)
-					return self.stop_auto_update_service()
+					return self.stop_auto_update_service(True)
 				except subprocess.CalledProcessError as e:
 					result=False
 					logMsg="LliurexUpManager:manage_auto_update_service.Error: %s"%str(e)
@@ -205,16 +206,16 @@ class LliurexUpManager:
 
 	#def manage_auto_update_service 
 			
-	def stop_auto_update_service(self,isSystemUpdate=False):
+	def stop_auto_update_service(self,restartConfig=False):
 
 		ret=self._stop_service()
 
 		if ret:
-			logMsg="LliurexUpManager:stop_auto_update_service.Try to stop service: isSystemUpdate: %s"%str(isSystemUpdate)
+			logMsg="LliurexUpManager:stop_auto_update_service.Try to stop service: restartConfig: %s"%str(restartConfig)
 			syslog.openlog("N4D-LLIUREXUP-MANAGER")
 			syslog.syslog(logMsg)
 
-			if isSystemUpdate:
+			if restartConfig:
 				self._init_control_vars()
 				ret=self._create_control_file()
 			else:
