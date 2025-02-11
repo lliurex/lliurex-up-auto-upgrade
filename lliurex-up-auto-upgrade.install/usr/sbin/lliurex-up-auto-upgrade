@@ -22,13 +22,13 @@ class LlxUpAutoUpgrade():
 		self.lliurexUpAutoControlFile="/etc/lliurex-up-auto-upgrade/lliurex-up-auto-upgrade.json"
 		self.context=ssl._create_unverified_context()
 		self.natFreeServerPath="/usr/bin/natfree-server"
+		self.natFreeClientPath="/usr/bin/natfree-client"
 		self.isADI=False
 		self.canConnectWithADI=False
 		self.adiInterval=900
-		self.adiDelay=300
-		self.desktopADIDelay=1800
 		self.deskopInterval=3600
-		self.desktopDelay=600
+		self.delay=300
+		self._debug=False
 
 		self.launchUpgrade()
 
@@ -38,29 +38,47 @@ class LlxUpAutoUpgrade():
 	def launchUpgrade(self):
 
 		self._cleanEnvironment()
-		
+		abort=True
+		time.sleep(300)
+
 		if self._canLaunchUpgrade():
 			if not self._getLockFlavour():
-				self._getDelayTime()
-				currentTime=datetime.datetime.now()
-				sleepTime=random.randint(self.delay,self.interval)
-				updateTime=currentTime+datetime.timedelta(seconds=sleepTime)
-				formatTime=updateTime.strftime("%H:%M:%S")
-				with open(self.tokenPath,'w') as fd:
-					fd.write(str(formatTime))
-			
-				time.sleep(sleepTime)
+				if self.canConnectWithADI:
+					if self._checkIfMirrorExists():
+						ret=self._isMirrorRunning()
+						if not ret:
+							abort=False
+					else:
+						abort=False
+				else:
+					abort=False
 
-				with open(self.lockPath,'w') as fd:
-					fd.close()
-
-				cmd="lliurex-upgrade -u"
-				try:
-					p=subprocess.run(cmd,shell=True,check=True)
-				except subprocess.CalledProcessError as e:
-					pass
+		if not abort:
+			msg="launchUpgrade: ready to continue"
+			self._showDebug(msg)
+			self._getDelayTime()
+			currentTime=datetime.datetime.now()
+			sleepTime=random.randint(self.delay,self.interval)
+			updateTime=currentTime+datetime.timedelta(seconds=sleepTime)
+			formatTime=updateTime.strftime("%H:%M:%S")
+			with open(self.tokenPath,'w') as fd:
+				fd.write(str(formatTime))
 			
-				self._cleanEnvironment()
+			msg="launchUpgrade: Update sheduled for: %s"%str(formatTime)
+			self._showDebug(msg)
+			time.sleep(sleepTime)
+
+			with open(self.lockPath,'w') as fd:
+				fd.close()
+
+			cmd="lliurex-upgrade -u"
+			try:
+				p=subprocess.run(cmd,shell=True,check=True)
+			except subprocess.CalledProcessError as e:
+				msg="launchUpgrade: Error: %s"%str(e)
+				pass
+			
+			self._cleanEnvironment()
 
 	#def launchUpgrade
 
@@ -88,7 +106,7 @@ class LlxUpAutoUpgrade():
 				
 		if client:
 			if desktop:
-				if self._checkIsConnectionWithServer():
+				if self._checkIsConnectionWithServerADI():
 					lockFlavour=True
 			else:
 				lockFlavour=True
@@ -97,44 +115,40 @@ class LlxUpAutoUpgrade():
 				if os.path.exists(self.natFreeServerPath):
 					self.isADI=True
 				else:
-					self._checkIsConnectionWithADI()
+					if os.path.exists(self.natFreeClientPath):
+						if self._checkIsConnectionWithServerADI():
+							self.canConnectWithADI=True
 
+		msg="_getLockFlavour: %s"%lockFlavour
+		self._showDebug(msg)
+		
 		return lockFlavour
 
 	#def _getLockFlavour
 
-	def _checkIsConnectionWithServer(self):
+	def _checkIsConnectionWithServerADI(self):
 
 		try:
-			client=n4d.client.Client("https://server:9779",context=self.context,allow_none=True)
-			test=client.is_alive('','MirrorManager')
+			self.client=n4dclient.ServerProxy("https://server:9779",context=self.context,allow_none=True)
+			test=self.client.is_alive('','MirrorManager')
+			msg="_checkIsConnectionWithServerADI: True"
+			self._showDebug(msg)
 			return True
 		except Exception as e:
+			msg="_checkIsConnectionWithServerADI: False : %s"%str(e)
+			self._showDebug(msg)
 			return False
 
-	#def _checkIsConnectionWithServer
-
-	def _checkIsConnectionWithADI(self):
-
-		self.canConnectWithADI=False
-
-	#def _checkIsConnectionWithADI
+	#def _checkIsConnectionWithServerADI
 
 	def _getDelayTime(self):
 
 		if self.isADI:
-			self.delay=self.adiDelay
 			self.interval=self.adiInterval
 
 		else:
-			if self.canConnectWithADI:
-				self.delay=self.desktopADIDelay
-				self.interval=self.deskopInterval
-			else:
-				self.delay=self.desktopDelay
-				self.interval=self.deskopInterval
-
-
+			self.interval=self.deskopInterval
+			
 	#def _getDelayTime
 
 	def _cleanEnvironment(self):
@@ -156,13 +170,71 @@ class LlxUpAutoUpgrade():
 				today=datetime.date.today()
 				today=today.isoformat()
 				if today<currentContent["dateToUpdate"]:
+					msg="_canLaunchUpgrade: False"
+					self._showDebug(msg)
 					return False
 			except:
 				pass
 
+		msg="_canLaunchUpgrade:True"
+		self._showDebug(msg)
+		
 		return True
 
 	#def _canLaunchUpgrade
+
+	def _checkIfMirrorExists(self):
+
+		try:
+			test=self.client.is_mirror_available('','MirrorManager')
+			if test['status']==0:
+				msg="_checkIfMirrorExists: ADI has mirror"
+				self._showDebug(msg)
+				return True
+			else:
+				msg="_checkIfMirrorExists: ADI does not have mirror"
+				self._showDebug(msg)
+				return False
+		except Exception as e:
+			msg="_checkIfMirrorExists: Error: %s"%str(e)
+			return False
+
+	#def _checkIfMirrorExists
+
+	def _isMirrorRunning(self):
+
+		maxAttemps=3
+		attemps=0
+		ret=True
+
+		while attemps<maxAttemps:
+			time.sleep(300)
+			try:
+				test=self.client.is_alive('','MirrorManager')['return']['status']
+				if test:
+					msg="_isMirrorRunning: ADI mirror is bein updated"
+					self._showDebug(msg)
+					attemps=+1
+				else:
+					msg="_isMirrorRunning: ADI mirror is ready to use"
+					ret=False
+					self._showDebug(msg)
+					break
+			except Exception as e:
+				msg="_isMirrorRunning: Error:%s"%str(e)
+				self._showDebug(msg)
+				break
+
+		return ret
+
+	#def _isMirrorRunning
+
+	def _showDebug(self,msg):
+
+		if self._debug:
+			print("[LliureX-Up-Auto-Upgrade]: %s"%str(msg))
+
+	#def _showDebug
 
 #def LlxUpAutoUpgrade
 
