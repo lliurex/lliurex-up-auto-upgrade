@@ -6,6 +6,12 @@
     },
     "METHODS": {
         
+        "read_current_config":{
+            "allowed_groups":[
+                "anonymous"
+            ]
+        },
+        
         "stop_auto_update_service": {
             "allowed_groups": [
                 "anonymous"
@@ -41,6 +47,14 @@
         "can_cancel_auto_upgrade":{
             "allowed_groups":[
                 "anonymous"
+            ]
+        },
+
+        "manage_auto_update_pause":{
+            "allowed_groups":[
+                "sudo",
+                "admins",
+                "teachers"
             ]
         },
 
