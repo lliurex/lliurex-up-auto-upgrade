@@ -1,0 +1,11 @@
+lliurex-up-auto-upgrade (1.0.1) jammy; urgency=medium
+
+  * Fixed stop function in n4d-plugin
+  
+ -- Juan Ramon Pelegrina <juapesai@hotmail.com>  Tue, 25 Jun 2024 10:21:56 +0200
+
+lliurex-up-auto-upgrade (1.0) jammy; urgency=medium
+
+  * Initial release.
+
+ -- Juan Ramon Pelegrina <juapesai@hotmail.com>  Tue, 25 Jun 2024 09:13:12 +0200

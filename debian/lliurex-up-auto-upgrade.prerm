@@ -1,0 +1,17 @@
+#!/bin/bash
+set -e
+
+case $1 in 
+     
+     remove|purge|abort-install|disappear) 
+     
+		systemctl stop lliurex-up-auto-upgrade.service || true
+		systemctl disable lliurex-up-auto-upgrade.service || true
+		
+     ;;
+esac
+
+#DEBHELPER#
+
+exit 0
+
