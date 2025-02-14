@@ -1,3 +1,9 @@
+lliurex-up-auto-upgrade (1.0.1.1) jammy-testing; urgency=medium
+
+  * Test version
+  
+ -- Juan Ramon Pelegrina <juapesai@hotmail.com>  Fri, 14 Feb 2025 11:58:31 +0100
+
 lliurex-up-auto-upgrade (1.0.1) jammy; urgency=medium
 
   * Fixed stop function in n4d-plugin
