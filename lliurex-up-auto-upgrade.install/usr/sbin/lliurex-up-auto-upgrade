@@ -28,6 +28,7 @@ class LlxUpAutoUpgrade():
 		self.deskopInterval=3600
 		self.delay=300
 		self._debug=False
+		self.versionReference=["adi","desktop"]
 
 		self.launchUpgrade()
 
@@ -88,7 +89,10 @@ class LlxUpAutoUpgrade():
 
 		if type(result) is bytes:
 			result=result.decode()
-		flavours = [ x.strip() for x in result.split(',') ]	
+
+		for x in result.split(","):
+			if x.strip() in self.versionReference:
+				flavours.append(x.strip())
 		
 		for item in flavours:
 			if 'adi' in item:
