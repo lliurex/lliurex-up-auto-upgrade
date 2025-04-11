@@ -83,6 +83,7 @@ class LlxUpAutoUpgrade():
 
 	def _getFlavour(self):
 
+		flavours=[]
 		cmd='lliurex-version -v'
 		p=subprocess.Popen(cmd,shell=True,stdout=subprocess.PIPE)
 		result=p.communicate()[0]
