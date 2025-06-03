@@ -21,7 +21,7 @@ class LlxUpAutoUpgrade():
 		self.lockPath="/var/run/lliurex-up-auto-upgrade.lock"
 		self.lliurexUpAutoControlFile="/etc/lliurex-up-auto-upgrade/lliurex-up-auto-upgrade.json"
 		self.context=ssl._create_unverified_context()
-		self.natFreeClientPath="/usr/bin/natfree-client"
+		self.natFreeClientPath="/usr/bin/natfree-tie"
 		self.isADI=False
 		self.canConnectWithADI=False
 		self.adiInterval=900
