@@ -1,3 +1,9 @@
+lliurex-up-auto-upgrade (1.0.1.2) jammy-testing; urgency=medium
+
+  * Changed natfree references
+  
+ -- Juan Ramon Pelegrina <juapesai@hotmail.com>  Tue, 03 Jun 2025 08:09:05 +0200
+
 lliurex-up-auto-upgrade (1.0.1.1) jammy-testing; urgency=medium
 
   * Test version
