@@ -1,3 +1,9 @@
+lliurex-up-auto-upgrade (2.0.6) noble; urgency=medium
+
+  * Refactorized to avoid problems with pkg update
+  
+ -- Juan Ramon Pelegrina <juapesai@hotmail.com>  Mon, 09 Jun 2025 12:33:40 +0200
+
 lliurex-up-auto-upgrade (2.0.5) noble; urgency=medium
 
   * Replaced natfree-client by natfree-tie
