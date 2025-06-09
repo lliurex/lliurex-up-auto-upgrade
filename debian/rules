@@ -15,7 +15,7 @@
 
 export PYBUILD_NAME=lliurexup
 %:
-	dh $@ --with systemd
+	dh $@
 
 # dh_make generated override targets
 # This is example for Cmake (See https://bugs.debian.org/641051 )

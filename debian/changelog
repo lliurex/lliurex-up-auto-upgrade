@@ -1,3 +1,9 @@
+lliurex-up-auto-upgrade (1.0.1.3) jammy-testing; urgency=medium
+
+  * Refactorized to avoid error when pkg is updated
+  
+ -- Juan Ramon Pelegrina <juapesai@hotmail.com>  Mon, 09 Jun 2025 11:40:57 +0200
+
 lliurex-up-auto-upgrade (1.0.1.2) jammy-testing; urgency=medium
 
   * Changed natfree references
