@@ -1,3 +1,9 @@
+lliurex-up-auto-upgrade (2.0.7) noble; urgency=medium
+
+  * Dummy upgrade
+  
+ -- Juan Ramon Pelegrina <juapesai@hotmail.com>  Thu, 02 Apr 2026 10:27:45 +0200
+
 lliurex-up-auto-upgrade (2.0.6) noble; urgency=medium
 
   * Refactorized to avoid problems with pkg update
