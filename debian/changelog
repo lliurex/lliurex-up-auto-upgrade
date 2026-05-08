@@ -1,3 +1,9 @@
+lliurex-up-auto-upgrade (1.0.3) jammy; urgency=medium
+
+  * Dummy upgrade
+  
+ -- Juan Ramon Pelegrina <juapesai@hotmail.com>  Fri, 08 May 2026 14:02:44 +0200
+
 lliurex-up-auto-upgrade (1.0.2) jammy; urgency=medium
 
   * Changed to disable

@@ -1,13 +1,13 @@
 #!/bin/bash
 set -e
 
-AUTO_UPGRADE_TOKEN="/var/run/lliurex-up-auto-upgrade.token"
-AUTO_UPGRADE_CONTROL_DIR="/etc/lliurex-up-auto-upgrade"
-AUTO_UPGRADE_CONTROL_JSON="/etc/lliurex-up-auto-upgrade/lliurex-up-auto-upgrade.json"
-
 case $1 in 
      
      remove|purge|abort-install|disappear) 
+
+		AUTO_UPGRADE_TOKEN="/var/run/lliurex-up-auto-upgrade.token"
+		AUTO_UPGRADE_CONTROL_DIR="/etc/lliurex-up-auto-upgrade"
+		AUTO_UPGRADE_CONTROL_JSON="/etc/lliurex-up-auto-upgrade/lliurex-up-auto-upgrade.json"
      
 		if  [ -e "${AUTO_UPGRADE_TOKEN}" ]; then
 			rm -f "${AUTO_UPGRADE_TOKEN}" || true
