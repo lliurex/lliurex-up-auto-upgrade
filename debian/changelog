@@ -1,3 +1,9 @@
+lliurex-up-auto-upgrade (1.0.2) jammy; urgency=medium
+
+  * Changed to disable
+  
+ -- Juan Ramon Pelegrina <juapesai@hotmail.com>  Fri, 08 May 2026 13:33:29 +0200
+
 lliurex-up-auto-upgrade (1.0.1) jammy; urgency=medium
 
   * Fixed stop function in n4d-plugin
