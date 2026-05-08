@@ -2,11 +2,15 @@
 set -e
 
 AUTO_UPGRADE_CONTROL_DIR="/etc/lliurex-up-auto-upgrade"
+AUTO_UPGRADE_CONTROL_JSON="/etc/lliurex-up-auto-upgrade/lliurex-up-auto-upgrade.json"
 
 case $1 in 
      
      remove|purge|abort-install|disappear) 
      
+	    if [ -f "${AUTO_UPGRADE_CONTROL_JSON}" ];then
+          rm -f "${AUTO_UPGRADE_CONTROL_JSON}" || true
+        fi
 	    if [ -d "${AUTO_UPGRADE_CONTROL_DIR}" ];then
             rm -rf "${AUTO_UPGRADE_CONTROL_DIR}" || true
         fi
