@@ -39,6 +39,7 @@ case "$1" in
         fi
 		systemctl stop lliurex-up-auto-upgrade.service || true
 		systemctl disable lliurex-up-auto-upgrade.service || true
+        systemctl daemon-reload || true
     ;;
 
     abort-upgrade|abort-remove|abort-deconfigure)

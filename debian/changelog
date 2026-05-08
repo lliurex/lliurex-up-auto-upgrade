@@ -1,3 +1,9 @@
+lliurex-up-auto-upgrade (1.0.4) jammy; urgency=medium
+
+  * Restart systemctl daemon
+  
+ -- Juan Ramon Pelegrina <juapesai@hotmail.com>  Fri, 08 May 2026 14:20:57 +0200
+
 lliurex-up-auto-upgrade (1.0.3) jammy; urgency=medium
 
   * Dummy upgrade
