@@ -37,7 +37,6 @@ case "$1" in
 	    if [ -d "${AUTO_UPGRADE_CONTROL_DIR}" ];then
             rm -rf "${AUTO_UPGRADE_CONTROL_DIR}" || true
         fi
-		systemctl stop lliurex-up-auto-upgrade.service || true
 		systemctl disable lliurex-up-auto-upgrade.service || true
         systemctl daemon-reload || true
     ;;
