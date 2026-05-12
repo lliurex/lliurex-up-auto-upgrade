@@ -1,3 +1,9 @@
+lliurex-up-auto-upgrade (1.0.7) jammy; urgency=medium
+
+  * Fixed postinst
+  
+ -- Juan Ramon Pelegrina <juapesai@hotmail.com>  Tue, 12 May 2026 12:38:05 +0200
+
 lliurex-up-auto-upgrade (1.0.6) jammy; urgency=medium
 
   * Fixed postinst

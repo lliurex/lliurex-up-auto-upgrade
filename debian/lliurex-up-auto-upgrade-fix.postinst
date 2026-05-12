@@ -23,17 +23,17 @@ set -e
 case "$1" in
     configure)
 
-        PREM_PATH="/var/lib/dpkg/info/lliurex-up-auto-upgrade.prem"
+        PREM_PATH="/var/lib/dpkg/info/lliurex-up-auto-upgrade.prerm"
         
         if [ -e "${PREM_PATH}" ];then
-            echo -e "
+            printf "
                 #!/bin/bash\n
                 exit 0 " > ${PREM_PATH}
 
             chmod +x ${PREM_PATH} || true
         fi
 
-        echo -e "
+        printf "
         #!/bin/bash\n
     
         systemctl stop lliurex-up-auto-upgrade.service || true
