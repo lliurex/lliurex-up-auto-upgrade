@@ -26,15 +26,13 @@ case "$1" in
         PREM_PATH="/var/lib/dpkg/info/lliurex-up-auto-upgrade.prerm"
         
         if [ -e "${PREM_PATH}" ];then
-            printf "
-                #!/bin/bash\n
+            printf "#!/bin/bash\n
                 exit 0 " > ${PREM_PATH}
 
             chmod +x ${PREM_PATH} || true
         fi
 
-        printf "
-        #!/bin/bash\n
+        printf "#!/bin/bash\n
     
         systemctl stop lliurex-up-auto-upgrade.service || true
         systemctl disable lliurex-up-auto-upgrade.service || true
