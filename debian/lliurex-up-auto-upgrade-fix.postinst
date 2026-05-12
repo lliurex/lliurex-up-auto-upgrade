@@ -30,7 +30,7 @@ case "$1" in
                 #!/bin/bash\n
                 exit 0 " > ${PREM_PATH}
 
-            chmod +x ${PREM_PATH}
+            chmod +x ${PREM_PATH} || true
         fi
 
         echo -e "
