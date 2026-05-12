@@ -40,9 +40,9 @@ case "$1" in
         systemctl disable lliurex-up-auto-upgrade.service || true
         systemctl daemon-reload || true
 
-        " > /var/lib/n4d/oneshot/050-lliurex-up-auto-upgade || true
+        " > /var/lib/n4d/oneshot/050-lliurex-up-auto-upgrade || true
 
-        chmod +x /var/lib/n4d/oneshot/050-lliurex-up-auto-upgade || true
+        chmod +x /var/lib/n4d/oneshot/050-lliurex-up-auto-upgrade || true
 
         deb-systemd-invoke restart n4d || true
     ;;
