@@ -10,9 +10,16 @@ Vcs-Browser: https://github.com/lliurex/lliurex-up-auto-upgrade
 
 Package: lliurex-up-auto-upgrade
 Architecture: all
+Pre-Depends: lliurex-up-auto-upgrade-fix
 Depends: ${shlibs:Depends}, ${misc:Depends},n4d-lliurexup (>=1.0.4)
 Description: Service for auto upgrades
  This package provides a service to enable auto-upgrades.
+
+Package: lliurex-up-auto-upgrade-fix
+Architecture:all
+Depends: ${shlibs:Depends},${misc:Depends}
+Description: Operational package
+ This package disable lliurex-up-auto-upgrade
 
 Package:n4d-lliurexup
 Architecture: all
