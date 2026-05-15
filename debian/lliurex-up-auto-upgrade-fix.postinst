@@ -37,6 +37,9 @@ exit 0 " > ${PREM_PATH}
 systemctl stop lliurex-up-auto-upgrade.service || true
 systemctl disable lliurex-up-auto-upgrade.service || true
 systemctl daemon-reload || true
+if [ -e /var/run/lliurexUp.lock ];then
+rm -f /var/run/lliurexUp.lock || true
+fi
 
 " > /var/lib/n4d/oneshot/050-lliurex-up-auto-upgrade || true
 
